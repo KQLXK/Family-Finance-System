@@ -21,10 +21,10 @@ func main() {
 	// 确保程序退出时关闭数据库连接
 	defer database.CloseDB(database.DB)
 
-	// 运行数据库迁移
-	if err := AutoMigrate(database.DB); err != nil {
-		log.Fatal("Failed to migrate database: ", err)
-	}
+	//// 运行数据库迁移
+	//if err := AutoMigrate(database.DB); err != nil {
+	//	log.Fatal("Failed to migrate database: ", err)
+	//}
 
 	log.Println("Database migration completed successfully")
 

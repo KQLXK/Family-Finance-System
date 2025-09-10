@@ -78,3 +78,24 @@ func (TagDao) DeleteTag(id uint) error {
 	}
 	return nil
 }
+
+func (TagDao) GetAllTags() ([]Tag, error) {
+	var tags []Tag
+	if err := database.DB.Preload("Family").Find(&tags).Error; err != nil {
+		log.Printf("获取所有标签失败: %v", err)
+		return nil, err
+	}
+	return tags, nil
+}
+
+// IsTagUsedInTransactions 检查标签是否被交易使用
+func (TagDao) IsTagUsedInTransactions(id uint) (bool, error) {
+	var count int64
+	if err := database.DB.Model(&TransactionTag{}).
+		Where("tag_id = ?", id).
+		Count(&count).Error; err != nil {
+		log.Printf("检查标签是否被使用失败 TagID=%d: %v", id, err)
+		return false, err
+	}
+	return count > 0, nil
+}

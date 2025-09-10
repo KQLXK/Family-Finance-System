@@ -13,6 +13,7 @@ func SetupRouter() *gin.Engine {
 	memberHandler := handler.NewMemberHandler()
 	categoryHandler := handler.NewCategoryHandler()
 	transactionHandler := handler.NewTransactionHandler()
+	tagHandler := handler.NewTagHandler()
 
 	// 家庭相关路由
 	familyGroup := r.Group("/api/families")
@@ -34,6 +35,11 @@ func SetupRouter() *gin.Engine {
 		familyGroup.GET("/:id/transactions/time-range", transactionHandler.GetTransactionsByTimeRange)
 		familyGroup.GET("/:id/transactions/summary/category", transactionHandler.GetTransactionSummaryByCategory)
 		familyGroup.GET("/:id/transactions/summary/time", transactionHandler.GetTransactionSummaryByTime)
+
+		// 家庭标签相关路由
+		familyGroup.POST("/:id/tags", tagHandler.CreateTag)
+		familyGroup.GET("/:id/tags", tagHandler.GetTagsByFamilyID)
+		familyGroup.GET("/:id/tags/type", tagHandler.GetTagsByType)
 	}
 
 	// 成员相关路由（独立于家庭）
@@ -66,6 +72,15 @@ func SetupRouter() *gin.Engine {
 		transactionGroup.DELETE("/:id", transactionHandler.DeleteTransaction)
 		transactionGroup.POST("/:id/tags", transactionHandler.AddTagToTransaction)
 		transactionGroup.DELETE("/:id/tags/:tagId", transactionHandler.RemoveTagFromTransaction)
+	}
+
+	// 标签相关路由（独立于家庭）
+	tagGroup := r.Group("/api/tags")
+	{
+		tagGroup.GET("", tagHandler.GetAllTags)
+		tagGroup.GET("/:id", tagHandler.GetTagByID)
+		tagGroup.PUT("/:id", tagHandler.UpdateTag)
+		tagGroup.DELETE("/:id", tagHandler.DeleteTag)
 	}
 
 	return r

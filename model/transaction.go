@@ -164,6 +164,7 @@ func (TransactionDao) GetTransactionSummaryByCategory(familyID uint, startTime, 
 			log.Printf("扫描统计结果失败: %v", err)
 			continue
 		}
+		log.Println(categoryName, ":", totalAmount)
 		summary[categoryName] = totalAmount
 	}
 
@@ -189,7 +190,7 @@ func (TransactionDao) GetTransactionSummaryByTime(familyID uint, startTime, endT
 
 	// 执行SQL查询
 	rows, err := database.DB.Table("transactions").
-		Select(fmt.Sprintf("DATE_FORMAT(transaction_time, '%s') as time_period, SUM(amount)"), timeFormat).
+		Select(fmt.Sprintf("DATE_FORMAT(transaction_time, '%s') as time_period, SUM(amount)", timeFormat)).
 		Where("family_id = ? AND status = ? AND transaction_time BETWEEN ? AND ?",
 			familyID, Valid, startTime, endTime).
 		Group("time_period").
